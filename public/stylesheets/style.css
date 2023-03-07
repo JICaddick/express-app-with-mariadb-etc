@@ -1,0 +1,25 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+/* classes */
+.center {
+  text-align: center;
+}
+
+/* Make the buttons centered on the screen */
+.buttons {
+  grid-auto-flow: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  padding-bottom: 10px;
+} 
