@@ -1,3 +1,40 @@
+const { auth, requiresAuth } = require('express-openid-connect');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const authConfig = {
+  authRequired: false,
+  auth0Logout: true,
+  baseURL: process.env.baseURL,
+  clientID: process.env.clientID,
+  issuerBaseURL: process.env.issuerBaseURL,
+  secret: process.env.secret,
+};
+
+// console.log(process.env.secret);
+// console.log(process.env.baseURL);
+// console.log(process.env.clientID);
+// console.log(process.env.issuerBaseURL);
+
+const router = express.Router();
+
+// the following router.use was in there originally.
+router.use(auth(authConfig));
+
+// Attempt #1 (with const authconfig) auth router attaches /login, /logout, and /callback routes to the baseURL
+// app.use(auth(authConfig));
+
+// req.isAuthenticated is provided from the auth router
+
+router.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
+
+router.get('/login', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.openid.user));
+});
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -18,6 +55,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', router);
+
+router.get('/login', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.openid.user));
+});
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);
@@ -41,4 +84,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = router;
