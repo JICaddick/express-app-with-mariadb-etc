@@ -1,13 +1,24 @@
-var express = require('express');
-var router = express.Router();
+const { Router } = require('express');
 const { auth, requiresAuth } = require('express-openid-connect');
-const authConfig = require('../app').authConfig;
+const dotenv = require('dotenv');
 
-router.use(auth(authConfig)); // Apply the auth middleware
+dotenv.config();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+const router = Router();
+
+const authConfig = {
+  authRequired: false,
+  auth0Logout: true,
+  baseURL: process.env.baseURL,
+  clientID: process.env.clientID,
+  issuerBaseURL: process.env.issuerBaseURL,
+  secret: process.env.secret,
+};
+
+router.use(auth(authConfig));
+
+router.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 });
 
 router.get('/login', requiresAuth(), (req, res) => {
@@ -22,5 +33,5 @@ router.get('/discoveramagicalworldofpotatoes', (req, res) => {
   res.send('Welcome to the magical world of potatoes!');
 });
 
-
+// export default router;
 module.exports = router;
