@@ -21,6 +21,15 @@ router.get('/', (req, res) => {
   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 });
 
+// The following won't work without Passport middleware.
+// router.get('/', function(req, res, next) {
+//   if(req.isAuthenticated()){
+//     res.render('index', { title: 'Logged in' });
+//   } else {
+//     res.render('index', { title: 'Logged out' });
+//   }
+// });
+
 router.get('/login', requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.openid.user));
 });
